@@ -55,6 +55,8 @@
 
 #include "init.h"
 #include "util.h"
+#include "log.h"
+#include "vendor_init.h"
 
 using android::base::Timer;
 
