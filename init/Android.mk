@@ -62,6 +62,7 @@ $(foreach system_core_init_define,$(SYSTEM_CORE_INIT_DEFINES), \
 
 LOCAL_MODULE:= init
 LOCAL_C_INCLUDES += \
+    external/zlib \
     system/extras/ext4_utils \
     system/core/mkbootimg
 
