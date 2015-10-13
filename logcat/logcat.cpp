@@ -868,7 +868,7 @@ static int __logcat(android_logcat_context_internal* context) {
           { "dividers",      no_argument,       nullptr, 'D' },
           { "file",          required_argument, nullptr, 'f' },
           { "format",        required_argument, nullptr, 'v' },
-          { "color",         no_argument,       NULL,   'C' },
+          { "color",         no_argument,       nullptr, 'C' },
           // hidden and undocumented reserved alias for --regex
           { "grep",          required_argument, nullptr, 'e' },
           // hidden and undocumented reserved alias for --max-count
