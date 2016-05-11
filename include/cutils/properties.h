@@ -119,7 +119,7 @@ __BIONIC_FORTIFY_INLINE
 int property_get(const char *key, char *value, const char *default_value) {
     size_t bos = __bos(value);
     if (bos < PROPERTY_VALUE_MAX) {
-        __property_get_too_small_error();
+        //__property_get_too_small_error();
     }
     return __property_get_real(key, value, default_value);
 }
