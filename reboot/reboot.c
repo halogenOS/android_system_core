@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
         c = getopt(argc, argv, "p");
 
-        if (c == -1) {
+        if (c == -1 || c == EOF) {
             break;
         }
 
