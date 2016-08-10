@@ -386,6 +386,8 @@ on post-fs-data
     mkdir /data/system 0775 system system
     mkdir /data/system/heapdump 0700 system system
     mkdir /data/user 0711 system system
+    # Create halogenOS-specific directory for later use
+    mkdir /data/xos 0775 system system
 
     setusercryptopolicies /data/user
 
