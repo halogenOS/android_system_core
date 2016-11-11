@@ -315,7 +315,8 @@ static int console_init_action(const std::vector<std::string>& args)
         "\n"
         "\n"
         "\n"
-        "             A N D R O I D ";
+        "             A N D R O I D "
+        "           Starting halogenOS";
         write(fd, msg, strlen(msg));
         close(fd);
     }
