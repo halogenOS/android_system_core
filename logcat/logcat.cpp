@@ -514,7 +514,7 @@ static void show_help(android_logcat_context_internal* context) {
                    "eg: '*:S <tag>' prints only <tag>, '<tag>:S' suppresses all <tag> log messages.\n"
                    "\nIf not specified on the command line, filterspec is set from ANDROID_LOG_TAGS.\n"
                    "\nIf not specified with -v on command line, format is set from ANDROID_PRINTF_LOG\n"
-                   "or defaults to \"threadtime\"\n\n");
+                   "or defaults to \"tag\"\n\n");
 }
 
 static void show_format_help(android_logcat_context_internal* context) {
@@ -1395,7 +1395,7 @@ static int __logcat(android_logcat_context_internal* context) {
             }
         }
         if (!hasSetLogFormat) {
-            setLogFormat(context, "threadtime");
+            setLogFormat(context, "tag");
         }
     }
 
