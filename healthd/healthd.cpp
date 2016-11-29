@@ -43,7 +43,7 @@ using namespace android;
 //the default 60*10s wakeup timer to periodic check.
 #define DEFAULT_PERIODIC_CHORES_INTERVAL_SLOW -1
 #else
-#define DEFAULT_PERIODIC_CHORES_INTERVAL_FAST (60 * 1)
+#define DEFAULT_PERIODIC_CHORES_INTERVAL_FAST (60 * 4)
 #define DEFAULT_PERIODIC_CHORES_INTERVAL_SLOW (60 * 10)
 #endif
 
