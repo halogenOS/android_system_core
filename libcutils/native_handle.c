@@ -21,7 +21,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #include <cutils/log.h>
 #include <cutils/native_handle.h>
 
@@ -61,7 +60,7 @@ int native_handle_close(const native_handle_t* h)
 
     const int numFds = h->numFds;
     int i;
-    for (i=0 ; i<numFds ; i++) {
+    for (i=0; i < numFds; i++) {
         close(h->data[i]);
     }
     return 0;
