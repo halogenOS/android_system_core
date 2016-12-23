@@ -639,6 +639,13 @@ static void dump_crash(log_t* log, BacktraceMap* map, pid_t pid, pid_t tid,
 // form tombstone_XX where XX is 00 to MAX_TOMBSTONES-1, inclusive. If no
 // file is available, we reuse the least-recently-modified file.
 int open_tombstone(std::string* out_path) {
+  // don't create tombstones at all if disabled by user
+  char value[PROPERTY_VALUE_MAX];
+  property_get("persist.debug.no_tombstones", value, "0");
+  if(value[0] == '1') {
+    ALOGI("Preventing engravation of a tombstone, disabled by user.");
+    return -1;
+  }
   // In a single pass, find an available slot and, in case none
   // exist, find and record the least-recently-modified file.
   char path[128];
@@ -691,6 +698,14 @@ int open_tombstone(std::string* out_path) {
 void engrave_tombstone(int tombstone_fd, BacktraceMap* map, pid_t pid, pid_t tid,
                        const std::set<pid_t>& siblings, int signal, int original_si_code,
                        uintptr_t abort_msg_address, std::string* amfd_data) {
+  // don't create tombstones at all if disabled by user
+  char value[PROPERTY_VALUE_MAX];
+  property_get("persist.debug.no_tombstones", value, "0");
+  if(value[0] == '1') {
+    ALOGI("Caught crash of pid %i with signal %s, not engraving a tombstone.",
+            pid, get_signame(signal));
+    return;
+  }
   log_t log;
   log.current_tid = tid;
   log.crashed_tid = tid;
