@@ -29,7 +29,7 @@ PIXELFLINGER_SRC_FILES += \
 
 endif
 
-PIXELFLINGER_CFLAGS := -fstrict-aliasing -fomit-frame-pointer
+PIXELFLINGER_CFLAGS := -fstrict-aliasing -fomit-frame-pointer -O3
 
 PIXELFLINGER_SRC_FILES_arm := \
 	codeflinger/ARMAssembler.cpp \
@@ -88,6 +88,7 @@ LOCAL_SRC_FILES_x86_64 := $(PIXELFLINGER_SRC_FILES_x86)
 LOCAL_SRC_FILES_mips := $(PIXELFLINGER_SRC_FILES_mips)
 LOCAL_SRC_FILES_mips64 := $(PIXELFLINGER_SRC_FILES_mips64)
 LOCAL_CFLAGS := $(PIXELFLINGER_CFLAGS)
+LOCAL_CPPFLAGS += -O3
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 LOCAL_C_INCLUDES += $(LOCAL_EXPORT_C_INCLUDE_DIRS) \
 		    external/safe-iop/include
