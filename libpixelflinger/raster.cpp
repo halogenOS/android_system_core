@@ -59,13 +59,10 @@ void ggl_copyPixels(void* con, GGLint xs, GGLint ys,
     surface_t* cb = &(c->state.buffers.color);
 
     // undefined behaviour if we try to copy from outside the surface
-    if (uint32_t(xs) > cb->width)
-        return;
-    if (uint32_t(ys) > cb->height)
-        return;
-    if (uint32_t(xs + width) > cb->width)
-        return;
-    if (uint32_t(ys + height) > cb->height)
+    if (uint32_t(xs) > cb->width            ||
+        uint32_t(ys) > cb->height           ||
+        uint32_t(xs + width) > cb->width    ||
+        uint32_t(ys + height) > cb->height)
         return;
 
     // copy to current raster position
