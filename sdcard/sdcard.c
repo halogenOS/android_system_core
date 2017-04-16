@@ -99,10 +99,10 @@
 #define FUSE_UNKNOWN_INO 0xffffffff
 
 /* Maximum number of bytes to write in one request. */
-#define MAX_WRITE (256 * 1024)
+#define MAX_WRITE (1024 * 1024)
 
 /* Maximum number of bytes to read in one request. */
-#define MAX_READ (128 * 1024)
+#define MAX_READ (512 * 1024)
 
 /* Largest possible request.
  * The request size is bounded by the maximum size of a FUSE_WRITE request because it has
