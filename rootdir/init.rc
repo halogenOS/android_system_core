@@ -1,4 +1,5 @@
 # Copyright (C) 2012 The Android Open Source Project
+# Copyright (C) 2017 The halogenOS Project
 #
 # IMPORTANT: Do not create world writable files or directories.
 # This is a common source of Android security bugs.
@@ -520,7 +521,7 @@ on boot
     chmod 0664 /sys/module/lowmemorykiller/parameters/minfree
 
     # Tweak background writeout
-    write /proc/sys/vm/dirty_expire_centisecs 200
+    write /proc/sys/vm/dirty_expire_centisecs 220
     write /proc/sys/vm/dirty_background_ratio  5
 
     # Permissions for System Server and daemons.
