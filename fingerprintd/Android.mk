@@ -18,6 +18,10 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_CFLAGS := -Wall -Wextra -Werror -Wunused
+ifeq ($(TARGET_MORE_OPTIMIZATION),true)
+LOCAL_CFLAGS += -Ofast
+LOCAL_CLANG := true
+endif
 LOCAL_SRC_FILES := \
 	FingerprintDaemonProxy.cpp \
 	IFingerprintDaemon.cpp \

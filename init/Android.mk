@@ -26,6 +26,10 @@ init_cflags += \
     -Wno-unused-parameter \
     -Werror \
 
+ifeq ($(TARGET_MORE_OPTIMIZATION),true)
+init_cflags += -O3
+endif
+
 # --
 
 # If building on Linux, then build unit test for the host.
