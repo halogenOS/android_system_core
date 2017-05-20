@@ -518,6 +518,7 @@ static void draw_battery(const struct charger* charger)
              anim.cur_frame, frame.min_level,
              frame.disp_time);
     }
+
     draw_clock(anim);
     draw_percent(anim);
 }
