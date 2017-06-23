@@ -8,6 +8,11 @@ endif
 LOCAL_SRC_FILES := sdcard.c
 LOCAL_MODULE := libsdcard
 LOCAL_CFLAGS := -Wall -Wno-unused-parameter -Werror
+
+ifeq ($(TARGET_LEGACY_KERNEL_SDCARDFS),true)
+LOCAL_CFLAGS += -DKERNEL_LEGACY_SDCARDFS
+endif
+
 LOCAL_STATIC_LIBRARIES := libpackagelistparser
 LOCAL_MODULE_TAGS := optional
 include $(BUILD_STATIC_LIBRARY)
