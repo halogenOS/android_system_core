@@ -377,13 +377,6 @@ static int do_mkdir(const std::vector<std::string>& args) {
             }
         }
     }
-
-    if (e4crypt_is_native()) {
-        if (e4crypt_set_directory_policy(args[1].c_str())) {
-            wipe_data_via_recovery(std::string() + "set_policy_failed:" + args[1]);
-            return -1;
-        }
-    }
     return 0;
 }
 
