@@ -112,6 +112,7 @@ static int add_tid_to_cgroup(int tid, int fd)
 static void __initialize(void) {
 #if defined(USE_CPUSETS) || defined(USE_SCHEDBOOST)
     char* filename;
+#endif //defined(USE_CPUSETS) || defined(USE_SCHEDBOOST)
     if (!access("/dev/cpuctl/tasks", W_OK)) {
         __sys_supports_schedgroups = 1;
 
@@ -130,6 +131,7 @@ static void __initialize(void) {
         __sys_supports_schedgroups = 0;
     }
 
+#ifdef USE_CPUSETS
     if (!access("/dev/cpuset/tasks", W_OK)) {
 
         filename = "/dev/cpuset/foreground/tasks";
@@ -154,7 +156,7 @@ static void __initialize(void) {
         system_bg_schedboost_fd = open(filename, O_WRONLY | O_CLOEXEC);
     }
 #endif /* USE_SCHEDBOOST */
-#endif /* USE_CPUSETS ||  USE_SCHEDBOOST */
+#endif /* USE_CPUSETS */
 }
 
 /*
@@ -322,6 +324,12 @@ int set_cpuset_policy(int tid, SchedPolicy policy)
         boost_fd = fd = -1;
         break;
     }
+#if defined(USE_CPUSETS) || defined(USE_SCHEDBOOST)
+    if (add_tid_to_cgroup(tid, fd) != 0) {
+        if (errno != ESRCH && errno != ENOENT)
+            return -errno;
+    }
+#endif //defined(USE_CPUSETS) || defined(USE_SCHEDBOOST)
 
 #ifdef USE_SCHEDBOOST
     if (boost_fd > 0 && add_tid_to_cgroup(tid, boost_fd) != 0) {
