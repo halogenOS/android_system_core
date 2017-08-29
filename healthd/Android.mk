@@ -87,6 +87,13 @@ LOCAL_STATIC_LIBRARIES := \
     libm \
     libc \
 
+LOCAL_STATIC_LIBRARIES += libhealthd.xos
+ifneq ($(WITH_XOS_CHARGER),false)
+LOCAL_CFLAGS += -DWITH_XOS_CHARGER
+endif
+
+LOCAL_C_INCLUDES += external/xos/charger/include
+
 ifeq ($(strip $(BOARD_CHARGER_ENABLE_SUSPEND)),true)
 LOCAL_STATIC_LIBRARIES += libsuspend
 endif
@@ -141,6 +148,11 @@ LOCAL_STATIC_LIBRARIES += \
     libpng \
     libz \
 
+endif
+
+LOCAL_STATIC_LIBRARIES += libhealthd.xos
+ifneq ($(WITH_XOS_CHARGER),false)
+LOCAL_CFLAGS += -DWITH_XOS_CHARGER
 endif
 
 ifeq ($(strip $(BOARD_CHARGER_ENABLE_SUSPEND)),true)
