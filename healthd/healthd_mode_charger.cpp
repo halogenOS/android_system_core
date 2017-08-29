@@ -55,6 +55,8 @@
 
 #include <healthd/healthd.h>
 
+#include <healthd_board_xos.h>
+
 using namespace android;
 
 char *locale;
