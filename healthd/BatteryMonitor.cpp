@@ -350,6 +350,14 @@ bool BatteryMonitor::update(void) {
                     props.maxChargingVoltage = ChargingVoltage;
                     MaxPower = power;
                 }
+            int ChargingVoltage =
+                (access(path.string(), R_OK) == 0) ? getIntField(path) :
+                DEFAULT_VBUS_VOLTAGE;
+
+            // there are devices that have the file but with a value of 0
+            if (ChargingVoltage == 0) {
+                ChargingVoltage = DEFAULT_VBUS_VOLTAGE;
+            }
             }
         }
     }
