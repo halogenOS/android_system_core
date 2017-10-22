@@ -107,8 +107,13 @@
 #define MF_ERASEBLKSIZE     0x800000
 #define MF_LOGICALBLKSIZE  0X1000000
 #define MF_AVB             0X2000000
+#define MF_AUTODETECTCRYPT 0x4000000
 
 #define DM_BUF_SIZE 4096
+
+#define AUTOCRYPT_MODE_NONE -1
+#define AUTOCRYPT_MODE_FDE 1
+#define AUTOCRYPT_MODE_FBE 2
 
 int fs_mgr_set_blk_ro(const char *blockdev);
 int fs_mgr_test_access(const char *device);
