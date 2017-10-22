@@ -62,6 +62,7 @@ struct fstab_rec {
     unsigned int file_names_mode;
     unsigned int erase_blk_size;
     unsigned int logical_blk_size;
+    int autocrypt_mode;
 };
 
 struct fstab* fs_mgr_read_fstab_default();

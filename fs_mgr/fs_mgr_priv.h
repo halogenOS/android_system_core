@@ -110,8 +110,13 @@
 #define MF_LOGICALBLKSIZE  0X1000000
 #define MF_AVB             0X2000000
 #define MF_KEYDIRECTORY 0X4000000
+#define MF_AUTODETECTCRYPT 0x8000000
 
 #define DM_BUF_SIZE 4096
+
+#define AUTOCRYPT_MODE_NONE -1
+#define AUTOCRYPT_MODE_FDE 1
+#define AUTOCRYPT_MODE_FBE 2
 
 using namespace std::chrono_literals;
 
