@@ -345,7 +345,7 @@ static Result<Success> do_mkdir(const BuiltinArguments& args) {
     if (fscrypt_is_native()) {
         if (fscrypt_set_directory_policy(args[1].c_str())) {
             return reboot_into_recovery(
-                {"--prompt_and_wipe_data", "--reason=set_policy_failed:"s + args[1]});
+                {"--reason=set_policy_failed:"s + args[1]});
         }
     }
     return Success();
