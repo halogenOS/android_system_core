@@ -86,6 +86,7 @@ struct FstabEntry {
         bool fs_verity : 1;
         bool wrappedkey : 1;
         bool autodetect_crypt : 1;
+        bool wrapped_key : 1;
     } fs_mgr_flags = {};
 
     bool is_encryptable() const {

@@ -214,6 +214,7 @@ void ParseFsMgrFlags(const std::string& flags, FstabEntry* entry) {
         CheckFlag("slotselect_other", slot_select_other);
         CheckFlag("fsverity", fs_verity);
         CheckFlag("autodetect_crypt", autodetect_crypt);
+        CheckFlag("wrappedkey", wrapped_key);
 
 #undef CheckFlag
 
