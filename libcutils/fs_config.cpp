@@ -1,18 +1,18 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright (C) 2007 The Android Open Source Project
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 #include <private/fs_config.h>
 
@@ -48,15 +48,15 @@ using android::base::StartsWith;
 
 // My kingdom for <endian.h>
 static inline uint16_t get2LE(const uint8_t* src) {
-    return src[0] | (src[1] << 8);
+return src[0] | (src[1] << 8);
 }
 
 static inline uint64_t get8LE(const uint8_t* src) {
-    uint32_t low, high;
+uint32_t low, high;
 
-    low = src[0] | (src[1] << 8) | (src[2] << 16) | (src[3] << 24);
-    high = src[4] | (src[5] << 8) | (src[6] << 16) | (src[7] << 24);
-    return ((uint64_t)high << 32) | (uint64_t)low;
+low = src[0] | (src[1] << 8) | (src[2] << 16) | (src[3] << 24);
+high = src[4] | (src[5] << 8) | (src[6] << 16) | (src[7] << 24);
+return ((uint64_t)high << 32) | (uint64_t)low;
 }
 
 #define ALIGN(x, alignment) (((x) + ((alignment)-1)) & ~((alignment)-1))
@@ -67,39 +67,39 @@ static inline uint64_t get8LE(const uint8_t* src) {
 // way up to the root.
 
 static const struct fs_path_config android_dirs[] = {
-        // clang-format off
-    { 00770, AID_SYSTEM,       AID_CACHE,        0, "cache" },
-    { 00555, AID_ROOT,         AID_ROOT,         0, "config" },
-    { 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/app" },
-    { 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/app-private" },
-    { 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/app-ephemeral" },
-    { 00771, AID_ROOT,         AID_ROOT,         0, "data/dalvik-cache" },
-    { 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/data" },
-    { 00771, AID_SHELL,        AID_SHELL,        0, "data/local/tmp" },
-    { 00771, AID_SHELL,        AID_SHELL,        0, "data/local" },
-    { 00770, AID_DHCP,         AID_DHCP,         0, "data/misc/dhcp" },
-    { 00771, AID_SHARED_RELRO, AID_SHARED_RELRO, 0, "data/misc/shared_relro" },
-    { 01771, AID_SYSTEM,       AID_MISC,         0, "data/misc" },
-    { 00775, AID_MEDIA_RW,     AID_MEDIA_RW,     0, "data/media/Music" },
-    { 00775, AID_MEDIA_RW,     AID_MEDIA_RW,     0, "data/media" },
-    { 00750, AID_ROOT,         AID_SHELL,        0, "data/nativetest" },
-    { 00750, AID_ROOT,         AID_SHELL,        0, "data/nativetest64" },
-    { 00775, AID_ROOT,         AID_ROOT,         0, "data/preloads" },
-    { 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data" },
-    { 00755, AID_ROOT,         AID_SYSTEM,       0, "mnt" },
-    { 00751, AID_ROOT,         AID_SHELL,        0, "product/bin" },
-    { 00750, AID_ROOT,         AID_SHELL,        0, "sbin" },
-    { 00777, AID_ROOT,         AID_ROOT,         0, "sdcard" },
-    { 00751, AID_ROOT,         AID_SDCARD_R,     0, "storage" },
-    { 00751, AID_ROOT,         AID_SHELL,        0, "system/bin" },
-    { 00755, AID_ROOT,         AID_ROOT,         0, "system/etc/ppp" },
-    { 00755, AID_ROOT,         AID_SHELL,        0, "system/vendor" },
-    { 00751, AID_ROOT,         AID_SHELL,        0, "system/xbin" },
-    { 00755, AID_ROOT,         AID_SHELL,        0, "system/apex/*/bin" },
-    { 00751, AID_ROOT,         AID_SHELL,        0, "vendor/bin" },
-    { 00755, AID_ROOT,         AID_SHELL,        0, "vendor" },
-    { 00755, AID_ROOT,         AID_ROOT,         0, 0 },
-        // clang-format on
+    // clang-format off
+{ 00770, AID_SYSTEM,       AID_CACHE,        0, "cache" },
+{ 00555, AID_ROOT,         AID_ROOT,         0, "config" },
+{ 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/app" },
+{ 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/app-private" },
+{ 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/app-ephemeral" },
+{ 00771, AID_ROOT,         AID_ROOT,         0, "data/dalvik-cache" },
+{ 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data/data" },
+{ 00771, AID_SHELL,        AID_SHELL,        0, "data/local/tmp" },
+{ 00771, AID_SHELL,        AID_SHELL,        0, "data/local" },
+{ 00770, AID_DHCP,         AID_DHCP,         0, "data/misc/dhcp" },
+{ 00771, AID_SHARED_RELRO, AID_SHARED_RELRO, 0, "data/misc/shared_relro" },
+{ 01771, AID_SYSTEM,       AID_MISC,         0, "data/misc" },
+{ 00775, AID_MEDIA_RW,     AID_MEDIA_RW,     0, "data/media/Music" },
+{ 00775, AID_MEDIA_RW,     AID_MEDIA_RW,     0, "data/media" },
+{ 00750, AID_ROOT,         AID_SHELL,        0, "data/nativetest" },
+{ 00750, AID_ROOT,         AID_SHELL,        0, "data/nativetest64" },
+{ 00775, AID_ROOT,         AID_ROOT,         0, "data/preloads" },
+{ 00771, AID_SYSTEM,       AID_SYSTEM,       0, "data" },
+{ 00755, AID_ROOT,         AID_SYSTEM,       0, "mnt" },
+{ 00751, AID_ROOT,         AID_SHELL,        0, "product/bin" },
+{ 00750, AID_ROOT,         AID_SHELL,        0, "sbin" },
+{ 00777, AID_ROOT,         AID_ROOT,         0, "sdcard" },
+{ 00751, AID_ROOT,         AID_SDCARD_R,     0, "storage" },
+{ 00751, AID_ROOT,         AID_SHELL,        0, "system/bin" },
+{ 00755, AID_ROOT,         AID_ROOT,         0, "system/etc/ppp" },
+{ 00755, AID_ROOT,         AID_SHELL,        0, "system/vendor" },
+{ 00751, AID_ROOT,         AID_SHELL,        0, "system/xbin" },
+{ 00755, AID_ROOT,         AID_SHELL,        0, "system/apex/*/bin" },
+{ 00751, AID_ROOT,         AID_SHELL,        0, "vendor/bin" },
+{ 00755, AID_ROOT,         AID_SHELL,        0, "vendor" },
+{ 00755, AID_ROOT,         AID_ROOT,         0, 0 },
+    // clang-format on
 };
 #ifndef __ANDROID_VNDK__
 auto __for_testing_only__android_dirs = android_dirs;
@@ -132,12 +132,12 @@ static const char product_conf_file[] = "/product/etc/fs_config_files";
 static const char product_services_conf_dir[] = "/product_services/etc/fs_config_dirs";
 static const char product_services_conf_file[] = "/product_services/etc/fs_config_files";
 static const char* conf[][2] = {
-        {sys_conf_file, sys_conf_dir},
-        {ven_conf_file, ven_conf_dir},
-        {oem_conf_file, oem_conf_dir},
-        {odm_conf_file, odm_conf_dir},
-        {product_conf_file, product_conf_dir},
-        {product_services_conf_file, product_services_conf_dir},
+    {sys_conf_file, sys_conf_dir},
+    {ven_conf_file, ven_conf_dir},
+    {oem_conf_file, oem_conf_dir},
+    {odm_conf_file, odm_conf_dir},
+    {product_conf_file, product_conf_dir},
+    {product_services_conf_file, product_services_conf_dir},
 };
 
 // Do not use android_files to grant Linux capabilities.  Use ambient capabilities in their
@@ -147,79 +147,79 @@ static const char* conf[][2] = {
 // Vendor entries should be done via a vendor or device specific config.fs.
 // See https://source.android.com/devices/tech/config/filesystem#using-file-system-capabilities
 static const struct fs_path_config android_files[] = {
-        // clang-format off
-    { 00644, AID_SYSTEM,    AID_SYSTEM,    0, "data/app/*" },
-    { 00644, AID_SYSTEM,    AID_SYSTEM,    0, "data/app-ephemeral/*" },
-    { 00644, AID_SYSTEM,    AID_SYSTEM,    0, "data/app-private/*" },
-    { 00644, AID_APP,       AID_APP,       0, "data/data/*" },
-    { 00644, AID_MEDIA_RW,  AID_MEDIA_RW,  0, "data/media/*" },
-    { 00640, AID_ROOT,      AID_SHELL,     0, "data/nativetest/tests.txt" },
-    { 00640, AID_ROOT,      AID_SHELL,     0, "data/nativetest64/tests.txt" },
-    { 00750, AID_ROOT,      AID_SHELL,     0, "data/nativetest/*" },
-    { 00750, AID_ROOT,      AID_SHELL,     0, "data/nativetest64/*" },
-    { 00600, AID_ROOT,      AID_ROOT,      0, "default.prop" }, // legacy
-    { 00600, AID_ROOT,      AID_ROOT,      0, "system/etc/prop.default" },
-    { 00600, AID_ROOT,      AID_ROOT,      0, "odm/build.prop" }, // legacy; only for P release
-    { 00600, AID_ROOT,      AID_ROOT,      0, "odm/default.prop" }, // legacy; only for P release
-    { 00600, AID_ROOT,      AID_ROOT,      0, "odm/etc/build.prop" },
-    { 00444, AID_ROOT,      AID_ROOT,      0, odm_conf_dir + 1 },
-    { 00444, AID_ROOT,      AID_ROOT,      0, odm_conf_file + 1 },
-    { 00444, AID_ROOT,      AID_ROOT,      0, oem_conf_dir + 1 },
-    { 00444, AID_ROOT,      AID_ROOT,      0, oem_conf_file + 1 },
-    { 00600, AID_ROOT,      AID_ROOT,      0, "product/build.prop" },
-    { 00444, AID_ROOT,      AID_ROOT,      0, product_conf_dir + 1 },
-    { 00444, AID_ROOT,      AID_ROOT,      0, product_conf_file + 1 },
-    { 00600, AID_ROOT,      AID_ROOT,      0, "product_services/build.prop" },
-    { 00444, AID_ROOT,      AID_ROOT,      0, product_services_conf_dir + 1 },
-    { 00444, AID_ROOT,      AID_ROOT,      0, product_services_conf_file + 1 },
-    { 00750, AID_ROOT,      AID_SHELL,     0, "sbin/fs_mgr" },
-    { 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/crash_dump32" },
-    { 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/crash_dump64" },
-    { 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/debuggerd" },
-    { 00750, AID_ROOT,      AID_ROOT,      0, "system/bin/install-recovery.sh" },
-    { 00550, AID_LOGD,      AID_LOGD,      0, "system/bin/logd" },
-    { 00700, AID_ROOT,      AID_ROOT,      0, "system/bin/secilc" },
-    { 00750, AID_ROOT,      AID_ROOT,      0, "system/bin/uncrypt" },
-    { 00600, AID_ROOT,      AID_ROOT,      0, "system/build.prop" },
-    { 00444, AID_ROOT,      AID_ROOT,      0, sys_conf_dir + 1 },
-    { 00444, AID_ROOT,      AID_ROOT,      0, sys_conf_file + 1 },
-    { 00440, AID_ROOT,      AID_SHELL,     0, "system/etc/init.goldfish.rc" },
-    { 00550, AID_ROOT,      AID_SHELL,     0, "system/etc/init.goldfish.sh" },
-    { 00550, AID_ROOT,      AID_SHELL,     0, "system/etc/init.ril" },
-    { 00555, AID_ROOT,      AID_ROOT,      0, "system/etc/ppp/*" },
-    { 00555, AID_ROOT,      AID_ROOT,      0, "system/etc/rc.*" },
-    { 00440, AID_ROOT,      AID_ROOT,      0, "system/etc/recovery.img" },
-    { 00600, AID_ROOT,      AID_ROOT,      0, "vendor/build.prop" },
-    { 00600, AID_ROOT,      AID_ROOT,      0, "vendor/default.prop" },
-    { 00444, AID_ROOT,      AID_ROOT,      0, ven_conf_dir + 1 },
-    { 00444, AID_ROOT,      AID_ROOT,      0, ven_conf_file + 1 },
+    // clang-format off
+{ 00644, AID_SYSTEM,    AID_SYSTEM,    0, "data/app/*" },
+{ 00644, AID_SYSTEM,    AID_SYSTEM,    0, "data/app-ephemeral/*" },
+{ 00644, AID_SYSTEM,    AID_SYSTEM,    0, "data/app-private/*" },
+{ 00644, AID_APP,       AID_APP,       0, "data/data/*" },
+{ 00644, AID_MEDIA_RW,  AID_MEDIA_RW,  0, "data/media/*" },
+{ 00640, AID_ROOT,      AID_SHELL,     0, "data/nativetest/tests.txt" },
+{ 00640, AID_ROOT,      AID_SHELL,     0, "data/nativetest64/tests.txt" },
+{ 00750, AID_ROOT,      AID_SHELL,     0, "data/nativetest/*" },
+{ 00750, AID_ROOT,      AID_SHELL,     0, "data/nativetest64/*" },
+{ 00600, AID_ROOT,      AID_ROOT,      0, "default.prop" }, // legacy
+{ 00600, AID_ROOT,      AID_ROOT,      0, "system/etc/prop.default" },
+{ 00600, AID_ROOT,      AID_ROOT,      0, "odm/build.prop" }, // legacy; only for P release
+{ 00600, AID_ROOT,      AID_ROOT,      0, "odm/default.prop" }, // legacy; only for P release
+{ 00600, AID_ROOT,      AID_ROOT,      0, "odm/etc/build.prop" },
+{ 00444, AID_ROOT,      AID_ROOT,      0, odm_conf_dir + 1 },
+{ 00444, AID_ROOT,      AID_ROOT,      0, odm_conf_file + 1 },
+{ 00444, AID_ROOT,      AID_ROOT,      0, oem_conf_dir + 1 },
+{ 00444, AID_ROOT,      AID_ROOT,      0, oem_conf_file + 1 },
+{ 00600, AID_ROOT,      AID_ROOT,      0, "product/build.prop" },
+{ 00444, AID_ROOT,      AID_ROOT,      0, product_conf_dir + 1 },
+{ 00444, AID_ROOT,      AID_ROOT,      0, product_conf_file + 1 },
+{ 00600, AID_ROOT,      AID_ROOT,      0, "product_services/build.prop" },
+{ 00444, AID_ROOT,      AID_ROOT,      0, product_services_conf_dir + 1 },
+{ 00444, AID_ROOT,      AID_ROOT,      0, product_services_conf_file + 1 },
+{ 00750, AID_ROOT,      AID_SHELL,     0, "sbin/fs_mgr" },
+{ 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/crash_dump32" },
+{ 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/crash_dump64" },
+{ 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/debuggerd" },
+{ 00750, AID_ROOT,      AID_ROOT,      0, "system/bin/install-recovery.sh" },
+{ 00550, AID_LOGD,      AID_LOGD,      0, "system/bin/logd" },
+{ 00700, AID_ROOT,      AID_ROOT,      0, "system/bin/secilc" },
+{ 00750, AID_ROOT,      AID_ROOT,      0, "system/bin/uncrypt" },
+{ 00600, AID_ROOT,      AID_ROOT,      0, "system/build.prop" },
+{ 00444, AID_ROOT,      AID_ROOT,      0, sys_conf_dir + 1 },
+{ 00444, AID_ROOT,      AID_ROOT,      0, sys_conf_file + 1 },
+{ 00440, AID_ROOT,      AID_SHELL,     0, "system/etc/init.goldfish.rc" },
+{ 00550, AID_ROOT,      AID_SHELL,     0, "system/etc/init.goldfish.sh" },
+{ 00550, AID_ROOT,      AID_SHELL,     0, "system/etc/init.ril" },
+{ 00555, AID_ROOT,      AID_ROOT,      0, "system/etc/ppp/*" },
+{ 00555, AID_ROOT,      AID_ROOT,      0, "system/etc/rc.*" },
+{ 00440, AID_ROOT,      AID_ROOT,      0, "system/etc/recovery.img" },
+{ 00600, AID_ROOT,      AID_ROOT,      0, "vendor/build.prop" },
+{ 00600, AID_ROOT,      AID_ROOT,      0, "vendor/default.prop" },
+{ 00444, AID_ROOT,      AID_ROOT,      0, ven_conf_dir + 1 },
+{ 00444, AID_ROOT,      AID_ROOT,      0, ven_conf_file + 1 },
 
-    // the following two files are INTENTIONALLY set-uid, but they
-    // are NOT included on user builds.
-    { 06755, AID_ROOT,      AID_ROOT,      0, "system/xbin/procmem" },
-    { 04750, AID_ROOT,      AID_SHELL,     0, "system/xbin/su" },
+// the following two files are INTENTIONALLY set-uid, but they
+// are NOT included on user builds.
+{ 06755, AID_ROOT,      AID_ROOT,      0, "system/xbin/procmem" },
+{ 04750, AID_ROOT,      AID_SHELL,     0, "system/xbin/su" },
 
-    // the following files have enhanced capabilities and ARE included
-    // in user builds.
-    { 00700, AID_SYSTEM,    AID_SHELL,     CAP_MASK_LONG(CAP_BLOCK_SUSPEND),
-                                              "system/bin/inputflinger" },
-    { 00750, AID_ROOT,      AID_SHELL,     CAP_MASK_LONG(CAP_SETUID) |
-                                           CAP_MASK_LONG(CAP_SETGID),
-                                              "system/bin/run-as" },
-    { 00750, AID_ROOT,      AID_SHELL,     CAP_MASK_LONG(CAP_SETUID) |
-                                           CAP_MASK_LONG(CAP_SETGID),
-                                              "system/bin/simpleperf_app_runner" },
+// the following files have enhanced capabilities and ARE included
+// in user builds.
+{ 00700, AID_SYSTEM,    AID_SHELL,     CAP_MASK_LONG(CAP_BLOCK_SUSPEND),
+                                          "system/bin/inputflinger" },
+{ 00750, AID_ROOT,      AID_SHELL,     CAP_MASK_LONG(CAP_SETUID) |
+                                       CAP_MASK_LONG(CAP_SETGID),
+                                          "system/bin/run-as" },
+{ 00750, AID_ROOT,      AID_SHELL,     CAP_MASK_LONG(CAP_SETUID) |
+                                       CAP_MASK_LONG(CAP_SETGID),
+                                          "system/bin/simpleperf_app_runner" },
 
-    // Support FIFO scheduling mode in SurfaceFlinger.
-    { 00755, AID_SYSTEM,    AID_GRAPHICS,  CAP_MASK_LONG(CAP_SYS_NICE),
-                                              "system/bin/surfaceflinger" },
-    // generic defaults
-    { 00755, AID_ROOT,      AID_ROOT,      0, "bin/*" },
-    { 00640, AID_ROOT,      AID_SHELL,     0, "fstab.*" },
-    { 00750, AID_ROOT,      AID_SHELL,     0, "init*" },
-    { 00755, AID_ROOT,      AID_SHELL,     0, "product/bin/*" },
-    { 00750, AID_ROOT,      AID_SHELL,     0, "sbin/*" },
-    { 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/*" },
+// Support FIFO scheduling mode in SurfaceFlinger.
+{ 00755, AID_SYSTEM,    AID_GRAPHICS,  CAP_MASK_LONG(CAP_SYS_NICE),
+                                          "system/bin/surfaceflinger" },
+// generic defaults
+{ 00755, AID_ROOT,      AID_ROOT,      0, "bin/*" },
+{ 00640, AID_ROOT,      AID_SHELL,     0, "fstab.*" },
+{ 00750, AID_ROOT,      AID_SHELL,     0, "init*" },
+{ 00755, AID_ROOT,      AID_SHELL,     0, "product/bin/*" },
+{ 00750, AID_ROOT,      AID_SHELL,     0, "sbin/*" },
+{ 00755, AID_ROOT,      AID_SHELL,     0, "system/bin/*" },
     { 00755, AID_ROOT,      AID_SHELL,     0, "system/etc/init.d/*" },
     { 00755, AID_ROOT,      AID_SHELL,     0, "system/xbin/*" },
     { 00755, AID_ROOT,      AID_SHELL,     0, "system/apex/*/bin/*" },

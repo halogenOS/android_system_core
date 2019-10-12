@@ -146,6 +146,7 @@ void ColdBoot::UeventHandlerMain(unsigned int process_num, unsigned int total_pr
             uevent_handler->HandleUevent(uevent);
         }
     }
+    _exit(EXIT_SUCCESS);
 }
 
 void ColdBoot::RestoreConHandler(unsigned int process_num, unsigned int total_processes) {
@@ -199,6 +200,10 @@ void ColdBoot::ForkSubProcesses() {
 
         subprocess_pids_.emplace(pid);
     }
+}
+
+void ColdBoot::DoRestoreCon() {
+    selinux_android_restorecon("/sys", SELINUX_ANDROID_RESTORECON_RECURSE);
 }
 
 void ColdBoot::WaitForSubProcesses() {
