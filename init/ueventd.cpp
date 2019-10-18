@@ -202,10 +202,6 @@ void ColdBoot::ForkSubProcesses() {
     }
 }
 
-void ColdBoot::DoRestoreCon() {
-    selinux_android_restorecon("/sys", SELINUX_ANDROID_RESTORECON_RECURSE);
-}
-
 void ColdBoot::WaitForSubProcesses() {
     // Treat subprocesses that crash or get stuck the same as if ueventd itself has crashed or gets
     // stuck.
