@@ -496,6 +496,9 @@ Commands
 > Loads persistent properties when /data has been decrypted.
   This is included in the default init.rc.
 
+`vendor_load_properties`
+> Update with vendor-specific property runtime overrides
+
 `loglevel <level>`
 > Sets the kernel log level to level. Properties are expanded within _level_.
 
