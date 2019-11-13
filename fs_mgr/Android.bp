@@ -98,6 +98,7 @@ cc_library_static {
     srcs: [
         "fs_mgr_fstab.cpp",
         "fs_mgr_boot_config.cpp",
+        "fs_mgr_crypt_autodetect.cpp",
         "fs_mgr_slotselect.cpp",
     ],
     target: {

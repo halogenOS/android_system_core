@@ -84,10 +84,11 @@ struct FstabEntry {
         bool first_stage_mount : 1;
         bool slot_select_other : 1;
         bool fs_verity : 1;
+        bool autodetect_crypt : 1;
     } fs_mgr_flags = {};
 
     bool is_encryptable() const {
-        return fs_mgr_flags.crypt || fs_mgr_flags.force_crypt || fs_mgr_flags.force_fde_or_fbe;
+        return fs_mgr_flags.crypt || fs_mgr_flags.force_crypt || fs_mgr_flags.force_fde_or_fbe || fs_mgr_flags.autodetect_crypt;
     }
 };
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2019 The halogenOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +36,7 @@
 #include <libgsi/libgsi.h>
 
 #include "fs_mgr_priv.h"
+#include "include_fstab/fstab/fstab_autodetect_crypt.h"
 
 using android::base::ParseByteCount;
 using android::base::ParseInt;
@@ -211,6 +213,7 @@ void ParseFsMgrFlags(const std::string& flags, FstabEntry* entry) {
         CheckFlag("first_stage_mount", first_stage_mount);
         CheckFlag("slotselect_other", slot_select_other);
         CheckFlag("fsverity", fs_verity);
+        CheckFlag("autodetect_crypt", autodetect_crypt);
 
 #undef CheckFlag
 
@@ -523,6 +526,10 @@ bool ReadFstabFile(FILE* fstab_file, bool proc_mounts, Fstab* fstab_out) {
 
         if (entry.fs_mgr_flags.logical) {
             entry.logical_partition_name = entry.blk_device;
+        }
+
+        if (entry.fs_mgr_flags.autodetect_crypt) {
+            AutodetectEncryption(&entry);
         }
 
         fstab.emplace_back(std::move(entry));
