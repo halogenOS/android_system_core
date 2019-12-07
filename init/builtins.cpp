@@ -144,7 +144,6 @@ inline ErrorIgnoreEnoent ErrnoErrorIgnoreEnoent() {
 
 [[clang::no_destroy]] std::vector<std::string> late_import_paths;
 
-static constexpr int kTpmClearedStatus = 1;
 static constexpr std::chrono::nanoseconds kCommandRetryTimeout = 5s;
 
 static Result<void> reboot_into_recovery(const std::vector<std::string>& options) {
@@ -1116,18 +1115,8 @@ static Result<void> do_wait_for_prop(const BuiltinArguments& args) {
     return {};
 }
 
-// Check the hwsec-ownership-id from gscutil to see if the TPM has been cleared.
-static bool CheckIfTpmCleared() {
-    const std::array<const char*, 2> args = {"/system/bin/check_tpm_clear", nullptr};
-    return (kTpmClearedStatus == ForkExecveAndWaitForCompletion(args[0], (char**)args.data()));
-}
-
 static bool is_file_crypto() {
     return android::base::GetProperty("ro.crypto.type", "") == "file";
-}
-
-static bool IsDeviceDesktop() {
-    return android::base::GetProperty("ro.hardware", "") == "android-desktop";
 }
 
 static Result<void> ExecWithFunctionOnFailure(const std::vector<std::string>& args,
@@ -1154,17 +1143,9 @@ static Result<void> ExecVdcRebootOnFailure(const std::string& vdc_arg) {
     auto reboot = [reboot_reason](const std::string& message) {
         // TODO (b/122850122): support this in gsi
         if (IsFbeEnabled() && !android::gsi::IsGsiRunning()) {
-            std::string wipe_option = "--prompt_and_wipe_data";
-            // TODO (b/456474148) Change this code to run as a vendor specific extension in
-            // recovery, flag will change to --wipe_data_with_tpm_check
-            if (IsDeviceDesktop() && reboot_reason == "init_user0_failed" && CheckIfTpmCleared()) {
-                wipe_option = "--wipe_data";
-            }
-            // If vdc has failed to mount the initial userdata partition and the gsc keys
-            // have been changed, we can perform a factory data reset on behalf of the user
-            // automatically.
             LOG(ERROR) << message << ": Rebooting into recovery, reason: " << reboot_reason;
-            if (auto result = reboot_into_recovery({wipe_option, "--reason="s + reboot_reason});
+            if (auto result = reboot_into_recovery(
+                        {"--reason="s + reboot_reason});
                 !result.ok()) {
                 LOG(FATAL) << "Could not reboot into recovery: " << result.error();
             }
