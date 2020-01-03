@@ -26,6 +26,7 @@ namespace fs_mgr {
 
 #define USERDATA_FBE_TEST_FILE "unencrypted/key/encrypted_key"
 #define USERDATA_FDE_MAGIC "\xD0\xB5\xB1\xC4"
+#define USERDATA_MEDIA_DIR "media"
 
 bool IsFdeEncrypted(FstabEntry& entry) {
     FILE* partition = fopen(entry.blk_device.c_str(), "rb");
@@ -54,17 +55,34 @@ bool IsFbeEncrypted(FstabEntry& entry) {
                         MS_NOATIME | MS_NOEXEC | MS_NOSUID | MS_RDONLY, entry.fs_options.c_str());
     if (!ret_mnt) {
         struct stat statbuf;
-        int printfbuf_size = sizeof("data/") + sizeof(USERDATA_FBE_TEST_FILE) + 1;
+        int printfbuf_size = sizeof("/data/") + sizeof(USERDATA_FBE_TEST_FILE) + 1;
         char printfbuf[printfbuf_size];
         bool is_fbe, umounted;
         int retry_count;
 
-        memset(printfbuf, 0, printfbuf_size);
-
-        sprintf(printfbuf, "data/%s", USERDATA_FBE_TEST_FILE);
+        // Using snprintf will make sure that there are no overflows
+        // and that the string is always terminated with null, thus
+        // memset is not needed anymore
+        snprintf(printfbuf, printfbuf_size, "/data/%s", USERDATA_FBE_TEST_FILE);
 
         printfbuf[printfbuf_size - 1] = '\0';
         is_fbe = !stat(printfbuf, &statbuf);
+        if (!is_fbe) {
+            // Not FBE, check if /data/media exists
+
+            // Reuse existing printfbuf (it's bigger than what we need)
+            snprintf(printfbuf, printfbuf_size, "/data/%s", USERDATA_MEDIA_DIR);
+            if (!stat(printfbuf, &statbuf)) {
+                // Dir exists, data is decrypted
+                is_fbe = false;
+            } else {
+                // Dir does not exist, check for decrypt file
+                snprintf(printfbuf, printfbuf_size, "/data/decrypt");
+                // This will be set to true if the file can't be found
+                is_fbe = stat(printfbuf, &statbuf);
+            }
+        }
+
         umounted = false;
         retry_count = 5;
         while (retry_count-- > 0) {
