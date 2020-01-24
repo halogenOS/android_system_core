@@ -389,12 +389,13 @@ static void import_kernel_nv(const std::string& key, const std::string& value, b
     } else if (key == "qemu") {
         strlcpy(qemu, value.c_str(), sizeof(qemu));
     } else if (android::base::StartsWith(key, "androidboot.")) {
-        property_set("ro.boot." + key.substr(12), value);
+        if (key == "androidboot.verifiedbootstate") property_set("ro.boot.verifiedbootstate", "green");
+        else property_set("ro.boot." + key.substr(12), value);
     }
 }
 
 static void export_oem_lock_status() {
-/*
+#if 0
     if (!android::base::GetBoolProperty("ro.oem_unlock_supported", false)) {
         return;
     }
@@ -404,7 +405,7 @@ static void export_oem_lock_status() {
                     property_set("ro.boot.flash.locked", value == "orange" ? "0" : "1");
                 }
             });
-*/
+#endif
 }
 
 static void export_kernel_boot_props() {
