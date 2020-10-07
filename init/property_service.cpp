@@ -1386,6 +1386,7 @@ static void ProcessKernelDt() {
 }
 
 constexpr auto ANDROIDBOOT_PREFIX = "androidboot."sv;
+constexpr auto ANDROIDBOOT_VERIFIEDBOOTSTATE = "androidboot.verifiedbootstate"sv;
 
 static void ProcessKernelCmdline() {
     android::fs_mgr::ImportKernelCmdline([&](const std::string& key, const std::string& value) {
@@ -1404,6 +1405,34 @@ static void ProcessBootconfig() {
     });
 }
 
+static void SetSafetyNetProps() {
+#ifdef RECOVERY
+    // Bail out if this is recovery, fastbootd, or anything other than a normal boot.
+    // fastbootd, in particular, needs the real values so it can allow flashing on
+    // unlocked bootloaders.
+    return;
+#endif
+
+    // Check whether verified boot state is yellow
+    auto isVerifiedBootYellow = false;
+    // This runs before keys are set as props, so we need to process them ourselves.
+    ImportKernelCmdline([&](const std::string& key, const std::string& value) {
+        if (key == ANDROIDBOOT_VERIFIEDBOOTSTATE && value == "yellow") {
+            isVerifiedBootYellow = true;
+        }
+    });
+    ImportBootconfig([&](const std::string& key, const std::string& value) {
+        if (key == ANDROIDBOOT_VERIFIEDBOOTSTATE && value == "yellow") {
+            isVerifiedBootYellow = true;
+        }
+    });
+
+    // Spoof verified boot state to green only when it's yellow
+    if (isVerifiedBootYellow) {
+        InitPropertySet("ro.boot.verifiedbootstate", "green");
+    }
+}
+
 void PropertyInit() {
     selinux_callback cb;
     cb.func_audit = PropertyAuditCallback;
@@ -1417,6 +1446,9 @@ void PropertyInit() {
     if (!property_info_area.LoadDefaultPath()) {
         LOG(FATAL) << "Failed to load serialized property info file";
     }
+
+    // Report valid verified boot chain to help pass Google SafetyNet integrity checks
+    SetSafetyNetProps();
 
     // If arguments are passed both on the command line and in DT,
     // properties set in DT always have priority over the command-line ones.
