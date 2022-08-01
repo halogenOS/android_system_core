@@ -1342,7 +1342,6 @@ static void ProcessKernelDt() {
 }
 
 constexpr auto ANDROIDBOOT_PREFIX = "androidboot."sv;
-constexpr auto ANDROIDBOOT_MODE = "androidboot.mode"sv;
 
 static void ProcessKernelCmdline() {
     ImportKernelCmdline([&](const std::string& key, const std::string& value) {
