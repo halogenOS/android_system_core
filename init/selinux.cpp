@@ -747,6 +747,9 @@ void ReadPolicy(std::string* policy) {
 void SelinuxSetEnforcement() {
     bool kernel_enforcing = (security_getenforce() == 1);
     bool is_enforcing = IsEnforcing();
+#ifdef WITH_SELINUX_PERMISSIVE
+    is_enforcing = false;
+#endif
     if (kernel_enforcing != is_enforcing) {
         if (security_setenforce(is_enforcing)) {
             PLOG(FATAL) << "security_setenforce(" << (is_enforcing ? "true" : "false")

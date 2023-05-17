@@ -113,6 +113,7 @@ soong_config_module_type {
 
 libinit_cc_defaults {
     name: "init_defaults",
+    defaults: ["with_selinux_permissive_defaults"],
     sanitize: {
         misc_undefined: ["signed-integer-overflow"],
     },
