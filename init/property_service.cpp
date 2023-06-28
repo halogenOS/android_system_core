@@ -806,16 +806,6 @@ static const char *snet_prop_key[] = {
     "ro.boot.veritymode",
     "ro.boot.warranty_bit",
     "ro.warranty_bit",
-    "ro.debuggable",
-    "ro.secure",
-    "ro.bootimage.build.type",
-    "ro.build.type",
-    "ro.system.build.type",
-    "ro.system_ext.build.type",
-    "ro.vendor.build.type",
-    "ro.vendor_dlkm.build.type",
-    "ro.product.build.type",
-    "ro.odm.build.type",
     "ro.build.keys",
     "ro.build.tags",
     "ro.system.build.tags",
@@ -834,16 +824,6 @@ static const char *snet_prop_value[] = {
     "enforcing", // ro.boot.veritymode
     "0", // ro.boot.warranty_bit
     "0", // ro.warranty_bit
-    "0", // ro.debuggable
-    "1", // ro.secure
-    "user", // ro.bootimage.build.type
-    "user", // ro.build.type
-    "user", // ro.system.build.type
-    "user", // ro.system_ext.build.type
-    "user", // ro.vendor.build.type
-    "user", // ro.vendor_dlkm.build.type
-    "user", // ro.product.build.type
-    "user", // ro.odm.build.type
     "release-keys", // ro.build.keys
     "release-keys", // ro.build.tags
     "release-keys", // ro.system.build.tags
