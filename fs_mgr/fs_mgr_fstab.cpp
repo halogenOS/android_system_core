@@ -834,7 +834,7 @@ bool ReadDefaultFstab(Fstab* fstab) {
             fstab->emplace_back(std::move(entry));
         }
     } else {
-        LINFO << __FUNCTION__ << "(): failed to find device default fstab";
+        LINFO << __FUNCTION__ << "(): failed to find device default fstab (" << default_fstab_path << ")";
     }
 
     return !fstab->empty();
