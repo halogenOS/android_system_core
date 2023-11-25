@@ -876,7 +876,7 @@ bool ReadDefaultFstab(Fstab* fstab) {
         fstab->insert(fstab->end(), std::make_move_iterator(default_fstab.begin()),
                       std::make_move_iterator(default_fstab.end()));
     } else {
-        LINFO << __FUNCTION__ << "(): failed to find device default fstab";
+        LINFO << __FUNCTION__ << "(): failed to find device default fstab (" << default_fstab_path << ")";
     }
 
     return !fstab->empty();
