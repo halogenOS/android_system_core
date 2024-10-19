@@ -108,6 +108,7 @@ static bool persistent_properties_loaded = false;
 static int from_init_socket = -1;
 static int init_socket = -1;
 static bool accept_messages = false;
+static bool weaken_prop_security = false;
 [[clang::no_destroy]] static std::mutex accept_messages_lock;
 [[clang::no_destroy]] static std::mutex selinux_check_access_lock;
 [[clang::no_destroy]] static std::thread property_service_thread;
@@ -397,7 +398,7 @@ static std::optional<uint32_t> PropertySet(const std::string& name, const std::s
         prop_info* pi = (prop_info*)__system_property_find(name.c_str());
         if (pi != nullptr) {
             // ro.* properties are actually "write-once".
-            if (StartsWith(name, "ro.")) {
+            if (StartsWith(name, "ro.") && !weaken_prop_security) {
                 *error = "Read-only property was already set";
                 return {PROP_ERROR_READ_ONLY_PROPERTY};
             }
@@ -1370,33 +1371,31 @@ static void ProcessBootconfig() {
 }
 
 static void SetSafetyNetProps() {
+<<<<<<< HEAD
     // Check whether this is a normal boot, and whether the bootloader is actually locked
-    auto isNormalBoot = true; // no prop = normal boot
-    // This runs before keys are set as props, so we need to process them ourselves.
-    android::fs_mgr::ImportKernelCmdline([&](const std::string& key, const std::string& value) {
-        if (key == ANDROIDBOOT_MODE && value != "normal") {
-            isNormalBoot = false;
-        }
-    });
-    android::fs_mgr::ImportBootconfig([&](const std::string& key, const std::string& value) {
-        if (key == ANDROIDBOOT_MODE && value != "normal") {
-            isNormalBoot = false;
-        }
-    });
+    std::string error;
+    std::string build_type = android::base::GetProperty("ro.build.type", "");
 
-    // Bail out if this is recovery, fastbootd, or anything other than a normal boot.
-    // fastbootd, in particular, needs the real values so it can allow flashing on
-    // unlocked bootloaders.
-    if (!isNormalBoot) {
-        return;
+    if (build_type == "user") {
+        // Disable prop security
+        weaken_prop_security = true;
+
+        // Array of property-value pairs to set
+        std::vector<std::pair<std::string, std::string>> properties = {
+            {"ro.boot.flash.locked", "1"},
+            {"ro.boot.verifiedbootstate", "green"},
+            {"ro.boot.veritymode", "enforcing"},
+            {"ro.boot.vbmeta.device_state", "locked"}
+        };
+
+        // Iterate through the vector and set properties
+        for (const auto& prop : properties) {
+            PropertySetNoSocket(prop.first, prop.second, &error);
+        }
+
+        // Restore prop security
+        weaken_prop_security = false;
     }
-
-    // Spoof properties
-    InitPropertySet("ro.boot.flash.locked", "1");
-    InitPropertySet("ro.boot.verifiedbootstate", "green");
-    InitPropertySet("ro.boot.veritymode", "enforcing");
-    InitPropertySet("ro.boot.vbmeta.device_state", "locked");
-    InitPropertySet("ro.build.tags", "release-keys");
 }
 
 void PropertyInit() {
@@ -1413,14 +1412,6 @@ void PropertyInit() {
         LOG(FATAL) << "Failed to load serialized property info file";
     }
 
-    // Report a valid verified boot chain to make Google SafetyNet integrity
-    // checks pass. This needs to be done before parsing the kernel cmdline as
-    // these properties are read-only and will be set to invalid values with
-    // androidboot cmdline arguments.
-    if (!IsRecoveryMode()) {
-      SetSafetyNetProps();
-    }
-
     // If arguments are passed both on the command line and in DT,
     // properties set in DT always have priority over the command-line ones.
     ProcessKernelDt();
@@ -1433,6 +1424,13 @@ void PropertyInit() {
 
     PropertyLoadBootDefaults();
     PropertyLoadDerivedDefaults();
+
+    // Report a valid verified boot chain to make Google SafetyNet integrity
+    // checks pass. This will disable the read only props protection while
+    // being set
+    if (!IsRecoveryMode()) {
+      SetSafetyNetProps();
+    }
 }
 
 static void HandleInitSocket() {
