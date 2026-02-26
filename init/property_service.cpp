@@ -1371,7 +1371,6 @@ static void ProcessBootconfig() {
 }
 
 static void SetSafetyNetProps() {
-<<<<<<< HEAD
     // Check whether this is a normal boot, and whether the bootloader is actually locked
     std::string error;
     std::string build_type = android::base::GetProperty("ro.build.type", "");
