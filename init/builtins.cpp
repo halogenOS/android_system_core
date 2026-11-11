@@ -583,12 +583,12 @@ static Result<void> queue_fs_event(int code) {
         ActionManager::GetInstance().QueueEventTrigger("nonencrypted");
         return {};
     } else if (code == FS_MGR_MNTALL_DEV_NEEDS_RECOVERY) {
-        /* Setup a wipe via recovery, and reboot into recovery */
+        /* Reboot into recovery without asking it to wipe anything */
         if (android::gsi::IsGsiRunning()) {
-            return Error() << "cannot wipe within GSI";
+            return Error() << "cannot reboot into recovery within GSI";
         }
-        PLOG(ERROR) << "fs_mgr_mount_all suggested recovery, so wiping data via recovery.";
-        const std::vector<std::string> options = {"--wipe_data", "--reason=fs_mgr_mount_all" };
+        PLOG(ERROR) << "fs_mgr_mount_all suggested recovery, rebooting into it without a wipe.";
+        const std::vector<std::string> options = {"--reason=fs_mgr_mount_all"};
         return reboot_into_recovery(options);
         /* If reboot worked, there is no return. */
     } else if (code == FS_MGR_MNTALL_DEV_FILE_ENCRYPTED ||
