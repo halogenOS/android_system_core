@@ -22,13 +22,32 @@ ifneq ($(filter address,$(SANITIZE_TARGET)),)
   LOCAL_REQUIRED_MODULES := asan.options $(ASAN_EXTRACT_FILES)
 endif
 
+# The directories of the root directory, some of them mount points.
+ALL_ROOTDIR_DIRS := $(addprefix $(TARGET_ROOT_OUT)/, \
+    dev proc sys system data data_mirror odm oem config storage mnt apex bootstrap-apex debug_ramdisk \
+    linkerconfig second_stage_resources postinstall tmp vendor_dlkm odm_dlkm system_dlkm \
+    $(BOARD_ROOT_EXTRA_FOLDERS))
+ifdef BOARD_USES_VENDORIMAGE
+  ALL_ROOTDIR_DIRS += $(TARGET_ROOT_OUT)/vendor
+endif
+ifdef BOARD_USES_PRODUCTIMAGE
+  ALL_ROOTDIR_DIRS += $(TARGET_ROOT_OUT)/product
+endif
+ifdef BOARD_USES_SYSTEM_EXTIMAGE
+  ALL_ROOTDIR_DIRS += $(TARGET_ROOT_OUT)/system_ext
+endif
+ifdef BOARD_USES_METADATA_PARTITION
+  ALL_ROOTDIR_DIRS += $(TARGET_ROOT_OUT)/metadata
+endif
+ifdef BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
+  ALL_ROOTDIR_DIRS += $(TARGET_ROOT_OUT)/cache
+endif
+
 # Put it here instead of in init.rc module definition,
 # because init.rc is conditionally included.
 #
-# create some directories (some are mount points) and symlinks
-LOCAL_POST_INSTALL_CMD := mkdir -p $(addprefix $(TARGET_ROOT_OUT)/, \
-    dev proc sys system data data_mirror odm oem config storage mnt apex bootstrap-apex debug_ramdisk \
-    linkerconfig second_stage_resources postinstall tmp $(BOARD_ROOT_EXTRA_FOLDERS)); \
+# create the directories and some symlinks
+LOCAL_POST_INSTALL_CMD := mkdir -p $(ALL_ROOTDIR_DIRS); \
     ln -sf /system/bin $(TARGET_ROOT_OUT)/bin; \
     ln -sf /system/etc $(TARGET_ROOT_OUT)/etc; \
     ln -sfn /sys/kernel/debug $(TARGET_ROOT_OUT)/d; \
@@ -51,30 +70,19 @@ ALL_ROOTDIR_SYMLINKS := \
   $(TARGET_ROOT_OUT)/sdcard \
   $(TARGET_ROOT_OUT)/adb_keys \
 
-ifdef BOARD_USES_VENDORIMAGE
-  LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/vendor
-else
+ifndef BOARD_USES_VENDORIMAGE
   LOCAL_POST_INSTALL_CMD += ; ln -sf /system/vendor $(TARGET_ROOT_OUT)/vendor
   ALL_ROOTDIR_SYMLINKS += $(TARGET_ROOT_OUT)/vendor
 endif
-ifdef BOARD_USES_PRODUCTIMAGE
-  LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/product
-else
+ifndef BOARD_USES_PRODUCTIMAGE
   LOCAL_POST_INSTALL_CMD += ; ln -sf /system/product $(TARGET_ROOT_OUT)/product
   ALL_ROOTDIR_SYMLINKS += $(TARGET_ROOT_OUT)/product
 endif
-ifdef BOARD_USES_SYSTEM_EXTIMAGE
-  LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/system_ext
-else
+ifndef BOARD_USES_SYSTEM_EXTIMAGE
   LOCAL_POST_INSTALL_CMD += ; ln -sf /system/system_ext $(TARGET_ROOT_OUT)/system_ext
   ALL_ROOTDIR_SYMLINKS += $(TARGET_ROOT_OUT)/system_ext
 endif
-ifdef BOARD_USES_METADATA_PARTITION
-  LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/metadata
-endif
-
 # For /odm partition.
-LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/odm
 # For Treble Generic System Image (GSI), system-as-root GSI needs to work on
 # both devices with and without /odm partition. Those symlinks are for devices
 # without /odm partition. For devices with /odm partition, mount odm.img under
@@ -106,7 +114,6 @@ ALL_ROOTDIR_SYMLINKS += \
 
 
 # For /vendor_dlkm partition.
-LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/vendor_dlkm
 # For Treble Generic System Image (GSI), system-as-root GSI needs to work on
 # both devices with and without /vendor_dlkm partition. Those symlinks are for
 # devices without /vendor_dlkm partition. For devices with /vendor_dlkm
@@ -117,7 +124,6 @@ LOCAL_POST_INSTALL_CMD += ; ln -sf /vendor/vendor_dlkm/etc $(TARGET_ROOT_OUT)/ve
 ALL_ROOTDIR_SYMLINKS += $(TARGET_ROOT_OUT)/vendor_dlkm/etc
 
 # For /odm_dlkm partition.
-LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/odm_dlkm
 # For Treble Generic System Image (GSI), system-as-root GSI needs to work on
 # both devices with and without /odm_dlkm partition. Those symlinks are for
 # devices without /odm_dlkm partition. For devices with /odm_dlkm
@@ -127,12 +133,7 @@ LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/odm_dlkm
 LOCAL_POST_INSTALL_CMD += ; ln -sf /odm/odm_dlkm/etc $(TARGET_ROOT_OUT)/odm_dlkm/etc
 ALL_ROOTDIR_SYMLINKS += $(TARGET_ROOT_OUT)/odm_dlkm/etc
 
-# For /system_dlkm partition
-LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/system_dlkm
-
-ifdef BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
-  LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/cache
-else
+ifndef BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
   LOCAL_POST_INSTALL_CMD += ; ln -sf /data/cache $(TARGET_ROOT_OUT)/cache
   ALL_ROOTDIR_SYMLINKS += $(TARGET_ROOT_OUT)/cache
 endif
