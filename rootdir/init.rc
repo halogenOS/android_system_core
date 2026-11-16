@@ -865,6 +865,8 @@ on post-fs-data
     mkdir /data/fonts/ 0771 root root encryption=Require
     mkdir /data/fonts/files 0771 system system
     mkdir /data/fonts/config 0770 system system
+    # Font files copied by FontManagerService out of the APKs of preinstalled font packages.
+    mkdir /data/fonts/packages 0771 system system
 
     # Create directories to push tests to for each linker namespace.
     # Create the subdirectories in case the first test is run as root
