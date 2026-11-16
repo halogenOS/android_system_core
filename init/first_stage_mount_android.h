@@ -41,6 +41,7 @@ class FirstStageMountAndroid final : public FirstStageMount {
   private:
     bool CreateLogicalPartitions();
     bool CreateSnapshotPartitions(SnapshotManager* sm);
+    [[noreturn]] void RebootIntoRecoveryToReinstallUpdate();
     bool InitDmLinearBackingDevices(const android::fs_mgr::LpMetadata& metadata);
 
     // Copies /avb/*.avbpubkey used for DSU from the ramdisk to /metadata for key

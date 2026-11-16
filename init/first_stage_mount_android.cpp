@@ -17,11 +17,14 @@
 #include "first_stage_mount_android.h"
 
 #include <android-base/strings.h>
+#include <bootloader_message/bootloader_message.h>
 #include <com_android_apex_flags.h>
+#include <cutils/android_reboot.h>
 #include <fs_mgr.h>
 #include <fs_mgr_overlayfs.h>
 #include <libfiemap/image_manager.h>
 #include <libgsi/libgsi.h>
+#include "reboot_utils.h"
 #include "snapuserd_transition.h"
 #include "util.h"
 
@@ -167,6 +170,9 @@ bool FirstStageMountAndroid::CreateLogicalPartitions() {
             return false;
         }
         if (sm->NeedSnapshotsInFirstStageMount()) {
+            if (sm->UpdateNeedsDmSnapshot()) {
+                RebootIntoRecoveryToReinstallUpdate();
+            }
             return CreateSnapshotPartitions(sm.get());
         }
     }
@@ -219,6 +225,28 @@ bool FirstStageMountAndroid::CreateSnapshotPartitions(SnapshotManager* sm) {
         CleanupSnapuserdSocket();
     }
     return true;
+}
+
+void FirstStageMountAndroid::RebootIntoRecoveryToReinstallUpdate() {
+    LOG(ERROR) << "The pending update needs dm-snapshot, which this version cannot map. "
+                  "Rebooting into recovery to install it again";
+
+    std::string err;
+    std::string misc_device = get_misc_blk_device(&err);
+    if (misc_device.empty()) {
+        LOG(FATAL) << "Could not find the misc partition: " << err;
+    }
+    if (!InitRequiredDevices({android::base::Basename(misc_device)})) {
+        LOG(FATAL) << "Could not create the misc device " << misc_device;
+    }
+    const std::vector<std::string> options = {
+            "--sideload",
+            std::string("--reason=") + kRecoveryReasonReinstallUpdate,
+    };
+    if (!write_bootloader_message_to(options, misc_device, &err)) {
+        LOG(FATAL) << "Failed to set bootloader message: " << err;
+    }
+    RebootSystem(ANDROID_RB_RESTART2, "recovery");
 }
 
 void FirstStageMountAndroid::UseDsuIfPresent() {
