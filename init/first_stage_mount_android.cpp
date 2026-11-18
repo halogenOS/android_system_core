@@ -232,11 +232,15 @@ void FirstStageMountAndroid::RebootIntoRecoveryToReinstallUpdate() {
                   "Rebooting into recovery to install it again";
 
     std::string err;
-    std::string misc_device = get_misc_blk_device(&err);
-    if (misc_device.empty()) {
+    std::string misc_in_fstab = get_misc_blk_device(&err);
+    if (misc_in_fstab.empty()) {
         LOG(FATAL) << "Could not find the misc partition: " << err;
     }
-    if (!InitRequiredDevices({android::base::Basename(misc_device)})) {
+    // The fstab may name misc through a link that an init script creates later. First-stage init
+    // links a partition of the boot device below /dev/block/by-name.
+    const std::string misc_partition = android::base::Basename(misc_in_fstab);
+    const std::string misc_device = "/dev/block/by-name/" + misc_partition;
+    if (!InitRequiredDevices({misc_partition})) {
         LOG(FATAL) << "Could not create the misc device " << misc_device;
     }
     const std::vector<std::string> options = {
