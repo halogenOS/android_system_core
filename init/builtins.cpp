@@ -46,6 +46,7 @@
 
 #include <map>
 #include <memory>
+#include <variant>
 
 #include <android-base/chrono_utils.h>
 #include <android-base/file.h>
@@ -99,6 +100,7 @@ using android::base::StringPrintf;
 using android::base::unique_fd;
 using android::fs_mgr::Fstab;
 using android::fs_mgr::ReadFstabFromFile;
+using android::fs_mgr::ToRecoveryReason;
 
 #define chmod DO_NOT_USE_CHMOD_USE_FCHMODAT_SYMLINK_NOFOLLOW
 
@@ -569,27 +571,29 @@ static void import_late(const std::vector<std::string>& rc_paths) {
 
 /* Queue event based on fs_mgr return code.
  *
- * code: return code of fs_mgr_mount_all
+ * result: the value that fs_mgr_mount_all returns
  *
  * This function might request a reboot, in which case it will
  * not return.
  *
  * return code is processed based on input code
  */
-static Result<void> queue_fs_event(int code) {
-    if (code == FS_MGR_MNTALL_DEV_NOT_ENCRYPTABLE) {
-        SetProperty("ro.crypto.state", "unsupported");
-        ActionManager::GetInstance().QueueEventTrigger("nonencrypted");
-        return {};
-    } else if (code == FS_MGR_MNTALL_DEV_NEEDS_RECOVERY) {
+static Result<void> queue_fs_event(const MountAllResult& result) {
+    if (const auto* recovery_request = std::get_if<RecoveryRequest>(&result)) {
         /* Reboot into recovery without asking it to wipe anything */
         if (android::gsi::IsGsiRunning()) {
             return Error() << "cannot reboot into recovery within GSI";
         }
         PLOG(ERROR) << "fs_mgr_mount_all suggested recovery, rebooting into it without a wipe.";
-        const std::vector<std::string> options = {"--reason=fs_mgr_mount_all"};
-        return reboot_into_recovery(options);
+        return reboot_into_recovery(
+                {"--reason="s + ToRecoveryReason(recovery_request->data_mount_failure)});
         /* If reboot worked, there is no return. */
+    }
+    const int code = std::get<int>(result);
+    if (code == FS_MGR_MNTALL_DEV_NOT_ENCRYPTABLE) {
+        SetProperty("ro.crypto.state", "unsupported");
+        ActionManager::GetInstance().QueueEventTrigger("nonencrypted");
+        return {};
     } else if (code == FS_MGR_MNTALL_DEV_FILE_ENCRYPTED ||
                code == FS_MGR_MNTALL_DEV_IS_METADATA_ENCRYPTED ||
                code == FS_MGR_MNTALL_DEV_NEEDS_METADATA_ENCRYPTION) {
